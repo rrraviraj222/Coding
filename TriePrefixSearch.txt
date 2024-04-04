@@ -1,0 +1,101 @@
+class Node
+{
+    Node *links[26];
+    bool isEndOfWord = false;
+
+    public :
+
+    bool containsChar(char ch)
+    {
+        if(links[ch-'a'] != NULL)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    Node * getChildNode(char ch)
+    {
+        return links[ch-'a'];
+    }
+
+    void putChar(char ch, Node*child)
+    {
+        links[ch-'a'] = child;
+    }
+
+    bool isEndWord()
+    {
+        return isEndOfWord;
+    }
+    
+    void setEndWordFlag()
+    {
+        isEndOfWord = true;
+    }
+};
+
+class Trie {
+    Node * root;
+public:
+    Trie() {
+        root = new Node();
+    }
+    
+    void insert(string word) {
+    Node *node = root;
+    for(int i = 0; i<word.length() ;i++)
+    {
+        if(!node->containsChar(word[i]))
+        {
+            node->putChar(word[i], new Node());
+        }
+
+        node = node -> getChildNode(word[i]);
+    }
+    node -> setEndWordFlag();
+    }
+    
+    bool search(string word) {
+    //cout<<"Search--->";
+    Node *node = root;
+    for(int i = 0; i<word.length() ;i++)
+    {
+        if(!node->containsChar(word[i]))
+        {
+            //cout<<"False"<<endl;
+            return false;
+        }
+        node = node -> getChildNode(word[i]);
+    }
+    //cout<<"x--->"<<node->isEndWord()<<endl;
+    return node->isEndWord();
+    }
+    
+    bool startsWith(string prefix) {
+        //cout<<"startsWith"<<endl;
+    Node *node = root;
+    for(int i = 0; i<prefix.length() ;i++)
+    {
+        if(!node->containsChar(prefix[i]))
+        {
+           // cout<<"False"<<endl;
+            return false;
+        }
+        node = node -> getChildNode(prefix[i]);
+    }
+        return true;
+    }
+};
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie* obj = new Trie();
+ * obj->insert(word);
+ * bool param_2 = obj->search(word);
+ * bool param_3 = obj->startsWith(prefix);
+ */
