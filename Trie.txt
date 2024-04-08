@@ -44,15 +44,43 @@ public:
     Trie() {
         root = new Node();
     }
-    
-    FunCtionCall()
+    void InsertWord(string word)
     {
-      char ch = 'x';
-      Node *node = root;
-      node->putChar(ch,new Node());
-      node -> setEndWordFlag();
-      var x = node->containChar(ch);
-      var y = node->isEndWord();
-      node = node->getChildNode(ch);
-    }    
+        Node*node = root;
+        for(int i = 0; i<word.length();i++)
+        {
+            char ch = word[i];
+            if(!node->containsChar(ch))
+            {
+                node->putChar(ch,new Node());
+            }
+            node = node->getChildNode(ch);
+        }
+        node->setEndWordFlag();
+    }
+
+    bool isWordPresent(string word)
+    {
+        Node*node = root;
+        for(int i = 0; i<word.length();i++)
+        {
+            char ch = word[i];
+            if(!node->containsChar(ch))
+            {
+                return false;
+            }
+            node = node->getChildNode(ch);
+        }
+        return node->isEndWord();
+    }
+};
+
+class Solution {
+    private:
+    Trie trie;
+  public:
+  void Insert(string x)
+  {
+   trie.InsertWord(x);
+  }
 };
