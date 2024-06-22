@@ -1,1 +1,86 @@
+class Node
+{
+    Node *links[26];
+    bool isEndOfWord = false;
 
+    public :
+    bool containsChar(char ch)
+    {
+        if(links[ch-'a'] != NULL)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    Node * getChildNode(char ch)
+    {
+        return links[ch-'a'];
+    }
+
+    void putChar(char ch, Node*child)
+    {
+        links[ch-'a'] = child;
+    }
+
+    bool isEndWord()
+    {
+        return isEndOfWord;
+    }
+    
+    void setEndWordFlag()
+    {
+        isEndOfWord = true;
+    }
+};
+
+class Trie {
+    Node * root;
+public:
+    Trie() {
+        root = new Node();
+    }
+    void InsertWord(string word)
+    {
+        Node*node = root;
+        for(int i = 0; i<word.length();i++)
+        {
+            char ch = word[i];
+            if(!node->containsChar(ch))
+            {
+                node->putChar(ch,new Node());
+            }
+            node = node->getChildNode(ch);
+        }
+        node->setEndWordFlag();
+    }
+
+    bool isWordPresent(string word)
+    {
+        Node*node = root;
+        for(int i = 0; i<word.length();i++)
+        {
+            char ch = word[i];
+            if(!node->containsChar(ch))
+            {
+                return false;
+            }
+            node = node->getChildNode(ch);
+        }
+        return node->isEndWord();
+    }
+};
+
+class Solution {
+    private:
+    Trie trie;
+  public:
+  void Insert(string x)
+  {
+   trie.InsertWord(x);
+  }
+};
