@@ -79,6 +79,20 @@ class SegmentTree {
         Node right = rangeQueryUtil(2 * node + 2, mid + 1, end, l, r);
         return combine(left, right);
     }
+   Node pointQueryUtil(int node, int start, int end, int idx) {
+        propagate(node, start, end);
+
+        if (start == end) {
+            return segTree[node];
+        }
+
+        int mid = (start + end) / 2;
+        if (idx <= mid) {
+            return pointQueryUtil(2 * node + 1, start, mid, idx);
+        } else {
+            return pointQueryUtil(2 * node + 2, mid + 1, end, idx);
+        }
+    }
 
 public:
     SegmentTree(vector<int>& arr) {
