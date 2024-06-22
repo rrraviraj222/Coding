@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <climits>
+
+using namespace std;
+
+struct Node {
+    int sum, max, min;
+    Node(int s = 0, int mx = INT_MIN, int mn = INT_MAX) : sum(s), max(mx), min(mn) {}
+};
+
+class SegmentTree {
+    vector<Node> segTree;
+    int size;
+
+    Node combine(Node left, Node right) {
+        Node result;
+        result.sum = left.sum + right.sum;
+        result.max = max(left.max, right.max);
+        result.min = min(left.min, right.min);
+        return result;
+    }
+
+    void buildTree(vector<int>& arr, int node, int start, int end) {
+        if (start == end) {
+            segTree[node] = Node(arr[start], arr[start], arr[start]);
+        } else {
+            int mid = (start + end) / 2;
+            buildTree(arr, 2 * node + 1, start, mid);
+            buildTree(arr, 2 * node + 2, mid + 1, end);
+            segTree[node] = combine(segTree[2 * node + 1], segTree[2 * node + 2]);
+        }
+    }
+
+    void pointUpdateUtil(int node, int start, int end, int idx, int val) {
+        if (start == end) {
+            segTree[node] = Node(val, val, val);
+        } else {
+            int mid = (start + end) / 2;
+            if (idx <= mid) {
+                pointUpdateUtil(2 * node + 1, start, mid, idx, val);
+            } else {
+                pointUpdateUtil(2 * node + 2, mid + 1, end, idx, val);
+            }
+            segTree[node] = combine(segTree[2 * node + 1], segTree[2 * node + 2]);
+        }
+    }
+
+    Node rangeQueryUtil(int node, int start, int end, int l, int r) {
+        if (r < start || end < l) {
+            return Node(0, INT_MIN, INT_MAX);
+        }
+        if (l <= start && end <= r) {
+            return segTree[node];
+        }
+        int mid = (start + end) / 2;
+        Node left = rangeQueryUtil(2 * node + 1, start, mid, l, r);
+        Node right = rangeQueryUtil(2 * node + 2, mid + 1, end, l, r);
+        return combine(left, right);
+    }
+
+public:
+    SegmentTree(vector<int>& arr) {
+        size = arr.size();
+        segTree.resize(4 * size);
+        buildTree(arr, 0, 0, size - 1);
+    }
+
+    void pointUpdate(int idx, int val) {
+        pointUpdateUtil(0, 0, size - 1, idx, val);
+    }
+
+    Node rangeQuery(int l, int r) {
+        return rangeQueryUtil(0, 0, size - 1, l, r);
+    }
+};
+
+}
